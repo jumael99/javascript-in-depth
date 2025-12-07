@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS 4-Hour Crash Course</title>
+
+    <!-- Fonts for excellent readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1e293b;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        pre, code, textarea {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .glass-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .editor-area {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            caret-color: white;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen">
+
+<!-- Sidebar / Navigation -->
+<aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col flex-shrink-0">
+    <div class="p-6 border-b border-slate-700">
+        <h1 class="text-xl font-bold tracking-tight text-blue-400">JS Crash Course</h1>
+        <p class="text-xs text-slate-400 mt-1">4-Hour Mastery Track</p>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4">
+        <ul id="module-list" class="space-y-1 px-3">
+            <!-- Navigation items injected by JS -->
+        </ul>
+    </nav>
+
+    <div class="p-4 border-t border-slate-700 bg-slate-800">
+        <div class="flex items-center gap-2 text-xs text-slate-300">
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span>Interactive Mode Active</span>
+        </div>
+    </div>
+</aside>
+
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+    <!-- Top Bar -->
+    <header class="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-8 flex-shrink-0">
+        <h2 id="current-title" class="text-2xl font-bold text-slate-800">Select a Module</h2>
+        <div class="text-sm font-medium text-slate-500" id="progress-indicator">Module 0/6</div>
+    </header>
+
+    <!-- Split View -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+        <!-- Learning Pane (Left/Top) -->
+        <div class="flex-1 overflow-y-auto p-8 bg-white" id="learn-pane">
+            <div class="max-w-3xl mx-auto">
+                <div id="theory-content" class="prose prose-slate max-w-none">
+                    <!-- Content Injected Here -->
+                    <div class="flex flex-col items-center justify-center h-64 text-center">
+                        <p class="text-lg text-slate-500">Welcome to your crash course.</p>
+                        <p class="text-slate-400">Select "1. The Spread Operator" from the sidebar to begin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coding Pane (Right/Bottom) -->
+        <div class="flex-1 flex flex-col border-l border-gray-200 bg-gray-50 h-1/2 lg:h-full">
+
+            <!-- Editor Toolbar -->
+            <div class="h-10 bg-gray-200 flex items-center justify-between px-4 border-b border-gray-300">
+                <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Solution Editor</span>
+                <div class="flex gap-2">
+                    <button onclick="app.resetCode()" class="text-xs text-gray-600 hover:text-black px-2 py-1">Reset</button>
+                    <button onclick="app.runCode()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded font-bold transition-colors flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+                        Run Code
+                    </button>
+                </div>
+            </div>
+
+            <!-- Text Area -->
+            <textarea id="code-editor" class="flex-1 w-full p-4 editor-area text-sm outline-none resize-none" spellcheck="false"></textarea>
+
+            <!-- Console Output -->
+            <div class="h-48 bg-slate-900 border-t border-slate-700 flex flex-col flex-shrink-0">
+                <div class="h-8 bg-slate-800 px-4 flex items-center justify-between">
+                    <span class="text-xs text-slate-400 font-mono">CONSOLE</span>
+                    <button onclick="app.clearConsole()" class="text-xs text-slate-500 hover:text-white">Clear</button>
+                </div>
+                <div id="console-output" class="flex-1 p-4 font-mono text-xs overflow-y-auto text-green-400">
+                    <span class="opacity-50">// Output will appear here...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- JavaScript Logic -->
+<script>
+    // --- 1. Data: The Curriculum ---
+    const curriculum = [
+        {
+            id: 1,
+            title: "1. The Spread Operator (...)",
+            description: "The modern way to copy and merge data.",
+            content: `
+                    <h3>Why this matters</h3>
+                    <p>In modern JS (especially React), we avoid changing data directly (mutation). Instead, we make copies, change the copy, and replace the old one. The Spread operator <code>...</code> is the cleanest way to do this.</p>
+
+                    <h4>1. Spreading Arrays</h4>
+                    <pre><code class="language-javascript">const oldNums = [1, 2, 3];
+// Copies oldNums, then adds 4 and 5
+const newNums = [...oldNums, 4, 5];
+console.log(newNums); // [1, 2, 3, 4, 5]</code></pre>
+
+                    <h4>2. Spreading Objects (Crucial)</h4>
+                    <p>This is how you update one specific field in a user object without deleting the rest.</p>
+                    <pre><code class="language-javascript">const user = { name: "Alex", age: 25, role: "Guest" };
+// Order matters! We copy 'user' first, then overwrite 'role'
+const updatedUser = { ...user, role: "Admin" }; </code></pre>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+                        <p class="font-bold text-blue-700">Challenge:</p>
+                        <p class="text-sm">In the editor, I have given you two arrays of tools and a player object.
+                        <ol class="list-decimal ml-5 text-sm mt-2">
+                            <li>Create a variable <code>allTools</code> that combines <code>toolsA</code> and <code>toolsB</code>.</li>
+                            <li>Create a variable <code>player2</code> that is a copy of <code>player1</code>, but change the <code>level</code> to 99.</li>
+                            <li>Log both results.</li>
+                        </ol>
+                        </p>
+                    </div>
+                `,
+            starterCode: `const toolsA = ['Hammer', 'Drill'];
+const toolsB = ['Saw', 'Wrench'];
+
+const player1 = { id: 1, name: "Hero", level: 5 };
+
+// 1. Combine arrays using ...
+const allTools =
+
+// 2. Clone object and update level
+const player2 =
+
+console.log("Tools:", allTools);
+console.log("Player 2:", player2);`,
+            solution: `const toolsA = ['Hammer', 'Drill'];
+const toolsB = ['Saw', 'Wrench'];
+
+const player1 = { id: 1, name: "Hero", level: 5 };
+
+// Solution
+const allTools = [...toolsA, ...toolsB];
+const player2 = { ...player1, level: 99 };
+
+console.log("Tools:", allTools);
+console.log("Player 2:", player2);`
+        },
+        {
+            id: 2,
+            title: "2. Array .map()",
+            description: "Transforming data without loops.",
+            content: `
+                    <h3>The Transformation Engine</h3>
+                    <p><code>.map()</code> is used when you have a list of X and you want a list of Y. It runs a function on every item and <strong>returns a new array</strong> of the same length.</p>
+
+                    <h4>Syntax</h4>
+                    <pre><code class="language-javascript">const prices = [10, 20, 30];
+const taxed = prices.map(price => price * 1.1);
+console.log(taxed); // [11, 22, 33]</code></pre>
+
+                    <h4>Common Pitfall</h4>
+                    <p>If you use <code>{}</code> braces in your arrow function, you MUST write the word <code>return</code>. If you skip braces, return is implicit.</p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+                        <p class="font-bold text-blue-700">Challenge:</p>
+                        <p class="text-sm">You have an array of users from a database.
+                        <ol class="list-decimal ml-5 text-sm mt-2">
+                            <li>Use <code>.map()</code> to create a new array called <code>badges</code>.</li>
+                            <li>For each user, return a string: <code>"[NAME] is a [ROLE]"</code>.</li>
+                            <li>Log the <code>badges</code> array.</li>
+                        </ol>
+                        </p>
+                    </div>
+                `,
+            starterCode: `const users = [
+    { name: "Sarah", role: "Admin" },
+    { name: "John", role: "Guest" },
+    { name: "Mike", role: "Owner" }
+];
+
+// Write your map function here
+const badges = users.map(user => {
+    // Return the string here
+});
+
+console.log(badges);`,
+            solution: `const users = [
+    { name: "Sarah", role: "Admin" },
+    { name: "John", role: "Guest" },
+    { name: "Mike", role: "Owner" }
+];
+
+const badges = users.map(user => \`\${user.name} is a \${user.role}\`);
+
+console.log(badges);`
+        },
+        {
+            id: 3,
+            title: "3. Closures",
+            description: "Functions that remember.",
+            content: `
+                    <h3>The Backpack Analogy</h3>
+                    <p>A closure is when a function is created, it packs a "backpack" of all the variables that were in scope at that time. Even if you run that function somewhere else later, it still has access to that backpack.</p>
+
+                    <h4>Why use it? (Data Privacy)</h4>
+                    <pre><code class="language-javascript">function createWallet() {
+    let balance = 0; // Private variable!
+
+    return {
+        deposit: (amount) => balance += amount,
+        check: () => balance
+    };
+}
+
+const myWallet = createWallet();
+myWallet.deposit(10);
+// console.log(balance) // ERROR: balance is not defined outside
+console.log(myWallet.check()); // 10 (Access via closure)</code></pre>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+                        <p class="font-bold text-blue-700">Challenge:</p>
+                        <p class="text-sm">Create a function <code>createCounter</code>.
+                        <ol class="list-decimal ml-5 text-sm mt-2">
+                            <li>It should define a private variable <code>count = 0</code>.</li>
+                            <li>It should return a function.</li>
+                            <li>Every time the returned function is called, it increments count and returns the new value.</li>
+                            <li>Test it by creating two separate counters.</li>
+                        </ol>
+                        </p>
+                    </div>
+                `,
+            starterCode: `function createCounter() {
+    // 1. Define private var
+
+    // 2. Return a function
+    return function() {
+        // Increment and return
+    }
+}
+
+const counterA = createCounter();
+const counterB = createCounter();
+
+console.log("A:", counterA()); // Should be 1
+console.log("A:", counterA()); // Should be 2
+console.log("B:", counterB()); // Should be 1 (Independent!)`,
+            solution: `function createCounter() {
+    let count = 0;
+    return function() {
+        count++;
+        return count;
+    }
+}
+
+const counterA = createCounter();
+const counterB = createCounter();
+
+console.log("A:", counterA());
+console.log("A:", counterA());
+console.log("B:", counterB());`
+        },
+        {
+            id: 4,
+            title: "4. Promises",
+            description: "Handling the future.",
+            content: `
+                    <h3>Pending, Resolved, Rejected</h3>
+                    <p>A Promise is an IOU. It promises to return a value in the future. It's how JS handles waiting (like waiting for a database).</p>
+
+                    <h4>Creating a Promise (Simulation)</h4>
+                    <pre><code class="language-javascript">const myPromise = new Promise((resolve, reject) => {
+    const success = true;
+    if(success) resolve("It worked!");
+    else reject("It failed.");
+});</code></pre>
+
+                    <h4>Consuming a Promise (.then)</h4>
+                    <pre><code class="language-javascript">myPromise
+    .then(data => console.log(data))
+    .catch(err => console.error(err));</code></pre>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+                        <p class="font-bold text-blue-700">Challenge:</p>
+                        <p class="text-sm">
+                        <ol class="list-decimal ml-5 text-sm mt-2">
+                            <li>Create a function <code>waitAndSay(message)</code>.</li>
+                            <li>It should return a <code>new Promise</code>.</li>
+                            <li>Inside the promise, use <code>setTimeout</code> to wait 1000ms.</li>
+                            <li>After the timeout, <code>resolve</code> with the message.</li>
+                            <li>Call it and log the result using <code>.then()</code>.</li>
+                        </ol>
+                        </p>
+                    </div>
+                `,
+            starterCode: `function waitAndSay(message) {
+    return new Promise((resolve, reject) => {
+        // Use setTimeout(() => { ... }, 1000)
+    });
+}
+
+console.log("1. Waiting...");
+
+waitAndSay("2. Hello Future!")
+    .then(data => {
+        console.log(data);
+    });`,
+            solution: `function waitAndSay(message) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(message);
+        }, 1000);
+    });
+}
+
+console.log("1. Waiting...");
+waitAndSay("2. Hello Future!").then(data => console.log(data));`
+        },
+        {
+            id: 5,
+            title: "5. Async / Await",
+            description: "Making Promises look Synchronous.",
+            content: `
+                    <h3>Syntactic Sugar</h3>
+                    <p>Chaining <code>.then()</code> gets messy. <code>async/await</code> lets us write code that looks like it pauses and waits, making it much easier to read.</p>
+
+                    <h4>Rules:</h4>
+                    <ol class="list-decimal ml-5 text-sm mb-4">
+                        <li>You can only use <code>await</code> inside a function marked <code>async</code>.</li>
+                        <li><code>await</code> pauses execution until the Promise resolves.</li>
+                        <li>Use <code>try/catch</code> for error handling.</li>
+                    </ol>
+
+                    <pre><code class="language-javascript">async function getData() {
+    try {
+        const result = await somePromise();
+        console.log(result);
+    } catch (error) {
+        console.log("Oops");
+    }
+}</code></pre>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+                        <p class="font-bold text-blue-700">Challenge:</p>
+                        <p class="text-sm">I've provided a <code>fakeFetch</code> function that acts like a server request.
+                        <ol class="list-decimal ml-5 text-sm mt-2">
+                            <li>Create an <code>async</code> function called <code>getUserData</code>.</li>
+                            <li>Use <code>await</code> to call <code>fakeFetch</code>.</li>
+                            <li>Log the result.</li>
+                            <li>Call <code>getUserData</code>.</li>
+                        </ol>
+                        </p>
+                    </div>
+                `,
+            starterCode: `// Don't touch this helper
+const fakeFetch = () => {
+    return new Promise(resolve => {
+        setTimeout(() => resolve({ id: 1, name: "Async Master" }), 800);
+    });
+};
+
+// Write your async function here
+async function getUserData() {
+    console.log("Fetching...");
+    // await ...
+}
+
+getUserData();`,
+            solution: `const fakeFetch = () => {
+    return new Promise(resolve => {
+        setTimeout(() => resolve({ id: 1, name: "Async Master" }), 800);
+    });
+};
+
+async function getUserData() {
+    console.log("Fetching...");
+    const user = await fakeFetch();
+    console.log("Received:", user);
+}
+
+getUserData();`
+        },
+        {
+            id: 6,
+            title: "6. Final Boss",
+            description: "Combine everything.",
+            content: `
+                    <h3>The Ultimate Test</h3>
+                    <p>This challenge combines <strong>Async/Await</strong>, <strong>Map</strong>, and <strong>Spread</strong>.</p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4">
+                        <p class="font-bold text-blue-700">Scenario:</p>
+                        <p class="text-sm">You are fetching a raw list of products. You need to add a "taxedPrice" to each one, but keep the original data intact.</p>
+
+                        <p class="font-bold text-blue-700 mt-2">Tasks:</p>
+                        <ol class="list-decimal ml-5 text-sm mt-1">
+                            <li>Create an <code>async</code> function <code>processOrders</code>.</li>
+                            <li><code>await</code> the <code>fetchProducts()</code> function.</li>
+                            <li>Use <code>.map()</code> and object spread <code>...</code> to create a new array.</li>
+                            <li>In the new array, every item should have a new field <code>taxedPrice</code> (price * 1.2).</li>
+                            <li>Log the final list.</li>
+                        </ol>
+                    </div>
+                `,
+            starterCode: `const fetchProducts = () => {
+    return new Promise(resolve => {
+        setTimeout(() => resolve([
+            { id: 1, item: "Book", price: 20 },
+            { id: 2, item: "Laptop", price: 1000 }
+        ]), 500);
+    });
+};
+
+async function processOrders() {
+    console.log("Getting data...");
+
+    // 1. Get raw data
+
+    // 2. Transform using map and spread
+
+    // 3. Log result
+}
+
+processOrders();`,
+            solution: `const fetchProducts = () => {
+    return new Promise(resolve => {
+        setTimeout(() => resolve([
+            { id: 1, item: "Book", price: 20 },
+            { id: 2, item: "Laptop", price: 1000 }
+        ]), 500);
+    });
+};
+
+async function processOrders() {
+    console.log("Getting data...");
+
+    const rawData = await fetchProducts();
+
+    const processed = rawData.map(product => {
+        return {
+            ...product,
+            taxedPrice: product.price * 1.2
+        };
+    });
+
+    console.log("Final List:", processed);
+}
+
+processOrders();`
+        }
+    ];
+
+    // --- 2. Application Logic ---
+    const app = {
+        currentModuleIndex: 0,
+
+        init: () => {
+            app.renderNavigation();
+            app.loadModule(0);
+            app.overrideConsole();
+        },
+
+        overrideConsole: () => {
+            const consoleOutput = document.getElementById('console-output');
+            const originalLog = console.log;
+            const originalError = console.error;
+
+            // Function to add line to our UI console
+            const addLine = (type, args) => {
+                const line = document.createElement('div');
+                line.className = type === 'error' ? 'text-red-400 mb-1' : 'text-green-400 mb-1';
+
+                // Convert args to string representation
+                const text = args.map(arg => {
+                    if (typeof arg === 'object') return JSON.stringify(arg, null, 2);
+                    return String(arg);
+                }).join(' ');
+
+                line.textContent = `> ${text}`;
+                consoleOutput.appendChild(line);
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            };
+
+            console.log = (...args) => {
+                addLine('log', args);
+                originalLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+                addLine('error', args);
+                originalError.apply(console, args);
+            };
+        },
+
+        clearConsole: () => {
+            document.getElementById('console-output').innerHTML = '';
+        },
+
+        renderNavigation: () => {
+            const list = document.getElementById('module-list');
+            list.innerHTML = curriculum.map((mod, index) => `
+                    <li>
+                        <button
+                            onclick="app.loadModule(${index})"
+                            class="w-full text-left px-3 py-2 rounded text-sm transition-colors ${index === 0 ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}"
+                            id="nav-btn-${index}"
+                        >
+                            ${mod.title}
+                        </button>
+                    </li>
+                `).join('');
+        },
+
+        loadModule: (index) => {
+            app.currentModuleIndex = index;
+            const mod = curriculum[index];
+
+            // Update UI Text
+            document.getElementById('current-title').textContent = mod.title;
+            document.getElementById('progress-indicator').textContent = `Module ${index + 1}/${curriculum.length}`;
+            document.getElementById('theory-content').innerHTML = mod.content;
+
+            // Update Code Editor
+            document.getElementById('code-editor').value = mod.starterCode;
+
+            // Update Navigation Styling
+            curriculum.forEach((_, i) => {
+                const btn = document.getElementById(`nav-btn-${i}`);
+                if (i === index) {
+                    btn.classList.remove('text-slate-400');
+                    btn.classList.add('bg-slate-800', 'text-white');
+                } else {
+                    btn.classList.add('text-slate-400');
+                    btn.classList.remove('bg-slate-800', 'text-white');
+                }
+            });
+
+            // Clear console for fresh start
+            app.clearConsole();
+
+            // Re-run Prism for syntax highlighting in theory section
+            Prism.highlightAll();
+        },
+
+        runCode: () => {
+            const userCode = document.getElementById('code-editor').value;
+            app.clearConsole();
+
+            try {
+                // Wrap in an async function to allow 'await' at top level of editor
+                const wrappedCode = `(async () => { ${userCode} })();`;
+                eval(wrappedCode);
+            } catch (e) {
+                console.error(e.message);
+            }
+        },
+
+        resetCode: () => {
+            const mod = curriculum[app.currentModuleIndex];
+            document.getElementById('code-editor').value = mod.starterCode;
+            app.clearConsole();
+        }
+    };
+
+    // Initialize App on Load
+    window.addEventListener('DOMContentLoaded', app.init);
+
+</script>
+</body>
+</html>
