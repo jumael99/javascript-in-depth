@@ -24,10 +24,11 @@ let bakery = ["Cake", "Cookie", "Bread", "Scone"];
 
 console.log(bakery);
 
-let myBakery = ["Croissant", "Granola"];
+let myBakery = bakery;
 
-bakery = myBakery;
+myBakery.push("Croissant");
+myBakery.push("Granola");
 
-console.log(bakery);
-console.log(myBakery);
+console.log(`bakery: ${bakery}`);
+console.log(`mybakery: ${myBakery}`);
 
