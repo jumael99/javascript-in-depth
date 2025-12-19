@@ -21,6 +21,6 @@ const timestwo = nums.map((element) => {
 const over50 = timestwo.filter((ele) => {
     return ele > 50;
 })
-console.log(nums);
-console.log(timestwo);
-console.log(over50);
+console.log(nums, timestwo, over50);
+// console.log(timestwo);
+// console.log(over50);
