@@ -13,7 +13,7 @@ import fetch from "node-fetch";
 const callFunction = async () => {
     const response = await fetch("https://www.craigslist.org/about/");
     const html = await response.text();
-    console.log(response);
+    console.log(html);
 }
 
 callFunction();

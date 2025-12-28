@@ -10,3 +10,24 @@
            fetch be doing with the JSON response for us?
 */
 
+import fetch from 'node-fetch'
+
+const fetchNow = async() => {
+
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+    return response.json();
+}
+
+fetchNow().then((val) => {
+    return val;
+}).then((val) => {
+    console.log(val.body);
+});
+
+// fetch('https://jsonplaceholder.typicode.com/posts/1')
+// .then((response) => {
+//     return response.text();
+// })
+// .then((html) => {
+//     console.log(html);
+// })
